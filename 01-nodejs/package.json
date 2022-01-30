@@ -1,0 +1,11 @@
+{
+  "name": "nodejs_api_course",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/ElderSam/nodejs_apis_course",
+  "author": "ElderSam",
+  "license": "MIT",
+  "scripts": {
+    "dev": "node ."
+  }
+}
