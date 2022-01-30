@@ -34,10 +34,6 @@ function getAddress(userId, callback) {
 	}, 2000);
 }
 
-function resolveUser(error, user) {
-	console.log("user: ", user);
-}
-
 getUser(function resolveUser(error, user) {
 	//NOTE: ( null || "" || 0) === false (in Javascript)
 
