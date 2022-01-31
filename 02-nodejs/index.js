@@ -3,6 +3,9 @@
     1 - Obter o número de telefone de um usuário a partir de seu Id
     2 - Obter o endereço do usuário pelo Id
 */
+// importamos um módulo interno do Node.js
+const util = require("util");
+const getAddressAsync = util.promisify(getAddress);
 
 function getUser() {
 	// quando der algum problema -> reject(ERRO)
@@ -45,20 +48,35 @@ const userPromise = getUser();
 // para manipular erros, usamos o .catch
 // user -> phone -> phone
 userPromise
-	.then(function (user) { // todo .then() e .catch() retornam uma nova Promise
-		return getPhone(user.id)
-			.then(function resolvePhone(result) {
-				return {  // manipula o resultado para o próximo then (de fora)
-					user: {
-						nome: user.name,
-						id: user.id
-					},
-					phone: result
-				}
-			})
+	.then(function (user) {
+		// todo .then() e .catch() retornam uma nova Promise
+		return getPhone(user.id).then(function resolvePhone(result) {
+			return {
+				// manipula o resultado para o próximo then (de fora)
+				user: {
+					name: user.name,
+					id: user.id,
+				},
+				phone: result,
+			};
+		});
+	})
+	.then(function (userResult) {
+		const address = getAddressAsync(userResult.user.id);
+		return address.then(function resulveAddress(addressResult) {
+			return {
+				user: userResult.user,
+				phone: userResult.phone,
+				address: addressResult,
+			};
+		});
 	})
 	.then(function (result) {
-		console.log("resultado", result);
+		console.log(`
+			Nome: ${result.user.name}
+			Endereço: ${result.address.street}, ${result.address.number}
+			Telefone: (${result.phone.ddd}) ${result.phone.phone}
+		`);
 	})
 	.catch(function (error) {
 		console.log("DEU RUIM", error);
