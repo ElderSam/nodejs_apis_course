@@ -27,3 +27,18 @@ console.log('digite algo')
 stdin.addListener('data', function (value) { // toda vez que digita uma entrada no terminal, dispara a função no addListener
     console.log(`Você digitou: ${value.toString().trim()}`)
 })
+
+// Exemplo incorreto -------------------------------------
+// function main() {
+//     // nesse exemplo não funciona, porque a ideia da Promise é executar uma única vez
+//     return new Promise(function (resolve, reject) {
+//         stdin.addListener('data', function (value) { // toda vez que digita uma entrada no terminal, dispara a função no addListener
+//             // console.log(`Você digitou: ${value.toString().trim()}`)
+//             return resolve(value)
+//         })
+//     }) 
+// }
+
+// main().then(function (resultado) {
+//     console.log('resultado:', resultado.toString())
+// })
