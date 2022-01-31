@@ -43,75 +43,29 @@ function getAddress(userId, callback) {
 	}, 2000);
 }
 
-const userPromise = getUser();
-// para manipular o sucesso usamos a função .then
-// para manipular erros, usamos o .catch
-// user -> phone -> phone
-userPromise
-	.then(function (user) {
-		// todo .then() e .catch() retornam uma nova Promise
-		return getPhone(user.id).then(function resolvePhone(result) {
-			return {
-				// manipula o resultado para o próximo then (de fora)
-				user: {
-					name: user.name,
-					id: user.id,
-				},
-				phone: result,
-			};
-		});
-	})
-	.then(function (userResult) {
-		const address = getAddressAsync(userResult.user.id);
-		return address.then(function resulveAddress(addressResult) {
-			return {
-				user: userResult.user,
-				phone: userResult.phone,
-				address: addressResult,
-			};
-		});
-	})
-	.then(function (result) {
-		console.log(`
-			Nome: ${result.user.name}
-			Endereço: ${result.address.street}, ${result.address.number}
-			Telefone: (${result.phone.ddd}) ${result.phone.phone}
+// 1º passo - adicionar a palavra async -> automaticamente ela retornará uma Promise
+main()
+async function main() {
+	try {
+		console.time('medida-promise') // captura velocidade (tempo de execução) de uma função
+		const user = await getUser();
+		// const phone = await getPhone(user.id);
+		// const address = await getAddressAsync(user.id)
+		const result = await Promise.all([ // chamar promises (requisições) em paralelo
+			getPhone(user.id),
+			getAddressAsync(user.id)
+		])
+
+		const phone = result[0]
+		const address = result[1]
+
+	console.log(`
+			Nome: ${user.name}
+			Telefone: (${phone.ddd}) ${phone.phone}
+			Endereço: ${address.street}, ${address.number}
 		`);
-	})
-	.catch(function (error) {
-		console.log("DEU RUIM", error);
-	});
-
-// getUser(function resolveUser(error, user) {
-// 	//NOTE: ( null || "" || 0) === false (in Javascript)
-
-// 	if (error) {
-// 		console.error("DEU RUIM em USUÁRIO", error);
-// 		return;
-// 	}
-//     console.log("user: ", user);
-
-// 	getPhone(user.id, function resolvePhone(error1, phone) {
-// 		if (error1) {
-// 			console.error("DEU RUIM em TELEFONE", error1);
-// 			return;
-// 		}
-
-// 		console.log("phone: ", phone);
-
-// 		getAddress(user.id, function resolveAddress(error2, address) {
-// 			if (error2) {
-// 				console.error("DEU RUIM em ENDEREÇO", error2);
-// 				return;
-// 			}
-
-// 			console.log("address: ", address);
-
-//             console.log(`
-//                 Nome: ${user.name},
-//                 Telefone: (${phone.ddd}) ${phone.phone},
-//                 Endereço: Rua ${address.street}, número ${address.number}
-//             `)
-// 		});
-// 	});
-// });
+		console.timeEnd('medida-promise')
+	} catch(error) {
+		console.error('DEU RUIM', error)
+	}
+}
