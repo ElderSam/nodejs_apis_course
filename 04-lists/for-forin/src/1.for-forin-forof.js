@@ -33,12 +33,3 @@ async function main() {
 }
 
 main()
-
-// getPeople("r2")
-// 	.then(function (result) {
-// 		console.log("resultado: ");
-//         console.log(result)
-// 	})
-// 	.catch(function (error) {
-// 		console.error("DEU RUIM: ", error);
-// 	});
